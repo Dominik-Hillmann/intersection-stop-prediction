@@ -1,0 +1,8 @@
+{
+    "0": "TotalTimeStopped_p20", 
+    "1": "TotalTimeStopped_p50", 
+    "2": "TotalTimeStopped_p80", 
+    "3": "DistanceToFirstStop_p20", 
+    "4": "DistanceToFirstStop_p50", 
+    "5": "DistanceToFirstStop_p80"
+}
