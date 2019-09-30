@@ -50,3 +50,6 @@ train_X, val_X, train_y, val_y = train_test_split(frame_X, frame_y, test_size = 
 tree_reg = DecisionTreeRegressor(random_state = SEED)
 tree_reg.fit(train_X, train_y['TotalTimeStopped_p20'])
 
+
+for y_col in YCOLS:
+    

@@ -34,8 +34,20 @@ def one_hottify_column(col):
     return re_frame
 
 
+def frame_to_one_hot(df, categorical_col_names):
+    """[summary]
+    
+    Arguments:
+        df {[type]} -- [description]
+        categorical_col_names {[type]} -- [description]
+    """
+    pass
+
+
 def main():
-    train_X = pd.read_csv(os.path.join('..', 'Data', 'train.csv')).set_index('RowId')
+    file_name = sys.argv[1]
+
+    train_X = pd.read_csv(os.path.join('..', 'Data', file_name)).set_index('RowId')
     train_X.drop([
         'EntryStreetName', 
         'ExitStreetName', 
@@ -61,11 +73,12 @@ def main():
         merged.drop(categorical_col, inplace = True, axis = 1)
 
     merged.to_csv(
-        os.path.join('..', 'Data', 'train_one_hot.csv'),
+        os.path.join('..', 'Data', file_name + '_one_hot.csv'),
         header = True,
         index = True,
         quoting = csv.QUOTE_ALL
     )
+
 
 if __name__ == '__main__':
     main()
