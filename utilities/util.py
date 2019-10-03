@@ -200,6 +200,9 @@ class TwoClassificationMetricsRecorder(MetricsRecorder):
     def f_beta_score(p, r, beta): 
         return (1 + (beta ** 2)) * (p * r) / (((beta ** 2) * p) + r)
 
+#######################
+# Writing Predictions #
+#######################
 
 def write_intersection_pred(preds_frame, path):
     n_rows, n_cols = preds_frame.shape
@@ -219,6 +222,10 @@ def write_intersection_pred(preds_frame, path):
         index = False,
         quoting = csv.QUOTE_NONE
     )
+
+#######################
+# Data Transformation #
+#######################
 
 #############
 # Cosmetics #

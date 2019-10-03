@@ -1,5 +1,5 @@
 '''
-Creates a decision tree regressor based on the train_one_hot.csv data.
+Creates a decision tree regressor based on the train_Transformed.csv data.
 '''
 # system libraries
 import os
@@ -33,9 +33,9 @@ YCOLS = [
 XCOLS = [
     'Latitude',
     'Longitude',
-    'Hour',
+    'Hour_sin', 'Hour_cos',
     'Weekend',
-    'Month',
+    'Month_sin', 'Month_cos',
     'EntryHeading_NW', 'EntryHeading_SE', 'EntryHeading_NE', 'EntryHeading_SW', 'EntryHeading_E',
     'EntryHeading_W', 'EntryHeading_S', 'EntryHeading_N', 'ExitHeading_NW', 'ExitHeading_SE', 
     'ExitHeading_NE', 'ExitHeading_SW', 'ExitHeading_E', 'ExitHeading_W', 'ExitHeading_N', 'ExitHeading_S', 
@@ -44,7 +44,7 @@ XCOLS = [
 
 def main():
     train_csv = pd.read_csv(
-        os.path.join('..', '..', 'Data', 'train_one_hot.csv'),
+        os.path.join('..', '..', 'Data', 'train_Transformed.csv'),
         header = 0,
         quoting = csv.QUOTE_ALL
     ).sample(frac = 1.0, replace = True) # shuffle
@@ -67,7 +67,6 @@ def main():
 
     recorders = [RegressionMetricsRecorder() for _ in YCOLS]
     for y_col_num in range(len(YCOLS)):
-        update_progress_bar(y_col_num, len(YCOLS))
         y_col = YCOLS[y_col_num]
 
         tree_reg = DecisionTreeRegressor(
@@ -84,11 +83,7 @@ def main():
             pred_y
         )
 
-    print(pred_frame.shape)
-    print(pred_frame.head(5).values)
-    print(pred_frame.head(5).values.reshape((5 * 6, )))
-    
-    print(pred_frame.head(5).values.shape)
+        update_progress_bar(y_col_num, len(YCOLS))
 
     for i in range(len(recorders)):
         print(YCOLS[i])
@@ -110,7 +105,7 @@ def main():
     # train on complete train data first
 
     test_csv = pd.read_csv(
-        os.path.join('..', '..', 'Data', 'test_one_hot.csv'),
+        os.path.join('..', '..', 'Data', 'test_Transformed.csv'),
         header = 0,
         quoting = csv.QUOTE_ALL
     )
@@ -119,7 +114,6 @@ def main():
 
     pred_frame_test = pd.DataFrame()
     for y_col_num in range(len(YCOLS)):
-        update_progress_bar(y_col_num, len(YCOLS))
         y_col = YCOLS[y_col_num]
 
         full_tree_reg = DecisionTreeRegressor(random_state = SEED)
@@ -128,6 +122,7 @@ def main():
 
         pred_frame_test[y_col] = pred_y
 
+        update_progress_bar(y_col_num, len(YCOLS))
     
     print(pred_frame_test.shape)
     print(pred_frame_test.head(5))

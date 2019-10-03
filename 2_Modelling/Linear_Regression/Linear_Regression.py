@@ -33,9 +33,9 @@ YCOLS = [
 XCOLS = [
     'Latitude',
     'Longitude',
-    'Hour',
+    'Hour_sin', 'Hour_cos',
     'Weekend',
-    'Month',
+    'Month_sin', 'Month_cos',
     'EntryHeading_NW', 'EntryHeading_SE', 'EntryHeading_NE', 'EntryHeading_SW', 'EntryHeading_E',
     'EntryHeading_W', 'EntryHeading_S', 'EntryHeading_N', 'ExitHeading_NW', 'ExitHeading_SE', 
     'ExitHeading_NE', 'ExitHeading_SW', 'ExitHeading_E', 'ExitHeading_W', 'ExitHeading_N', 'ExitHeading_S', 
@@ -44,7 +44,7 @@ XCOLS = [
 
 def main():
     train_csv = pd.read_csv(
-        os.path.join('..', '..', 'Data', 'train_one_hot.csv'),
+        os.path.join('..', '..', 'Data', 'train_Transformed.csv'),
         header = 0,
         quoting = csv.QUOTE_ALL
     ).sample(frac = 1.0, replace = True) # shuffle
@@ -103,7 +103,7 @@ def main():
     # train on complete train data first
 
     test_csv = pd.read_csv(
-        os.path.join('..', '..', 'Data', 'test_one_hot.csv'),
+        os.path.join('..', '..', 'Data', 'test_Transformed.csv'),
         header = 0,
         quoting = csv.QUOTE_ALL
     )
