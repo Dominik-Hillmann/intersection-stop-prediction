@@ -53,7 +53,7 @@ def main():
     frame_X = train_csv[XCOLS]
 
     train_X, val_X, train_y, val_y = train_test_split(
-        frame_X, 
+        frame_X,
         frame_y, 
         test_size = 0.33, 
         random_state = SEED

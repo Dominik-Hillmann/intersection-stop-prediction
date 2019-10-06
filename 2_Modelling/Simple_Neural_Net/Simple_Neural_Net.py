@@ -95,18 +95,12 @@ def main():
         val_scaled = min_max_scale_col(val_X[to_be_scaled_col])
         val_X[to_be_scaled_col] = val_scaled.values.flatten()
 
-    #################################
-    # BEGIN VALIDATION SET APPROACH # 
-    #################################
-
-    pred_frame = pd.DataFrame()
-    recorders = RegressionMetricsRecorder()
-
-    print(train_X.shape, train_y.shape)
-    print(val_X.shape, val_y.shape)
+    ##################
+    # Model training # 
+    ##################
 
     model = get_model(train_X.shape)
-    num_epochs = 150
+    num_epochs = 190
     history = model.fit(
         train_X.values,
         train_y.values,
@@ -122,26 +116,33 @@ def main():
     plt.legend(loc = 'upper left')
     plt.savefig('mse.png')
 
-    # # Write metrics to jsons
-    # for i in range(len(recorders)):
-    #     print(YCOLS[i])
-    #     pprint(recorders[i].mean_dict())
-    #     print()
+    ##########################
+    # Write evaluation JSONs #
+    ##########################
 
-    #     try:
-    #         with open(os.path.join('Evaluation', YCOLS[i] + '.json'), 'w') as file:
-    #             json.dump(recorders[i].mean_dict(), file)
-    #     except Exception as e:
-    #         print('Could not write metrics. ' + str(e))
-    #         continue
+    pred_y = model.predict(val_X.values)
+    print(pred_y.shape, val_y.shape, pred_y[:, 1].shape)
+
+    for col_num in range(val_y.shape[1]):
+        target_var_name = YCOLS[col_num]
+        metrics_recorder = RegressionMetricsRecorder()
+        print(col_num)
+        metrics_recorder.add_metric(
+            val_y.values[:, col_num], 
+            pred_y[:, col_num]
+        )
+
+        try:
+            with open(os.path.join('Evaluation', target_var_name + '.json'), 'w') as file:
+                json.dump(metrics_recorder.mean_dict(), file)
+        except Exception as e:
+            print('Could not write metrics. ' + str(e))
+            continue
+
+    #############################
+    # Predictions for test data #
+    #############################
     
-    ###############################
-    # END VALIDATION SET APPROACH #
-    #  START PREDICTION TEST SET  #
-    ###############################
-
-    # train on complete train data first
-
     test_csv = pd.read_csv(
         os.path.join('..', '..', 'Data', 'test_Transformed.csv'),
         header = 0,
@@ -153,24 +154,9 @@ def main():
         test_scaled = min_max_scale_col(test_X[to_be_scaled_col])
         test_X[to_be_scaled_col] = test_scaled.values.flatten()
 
-    # pred_frame_test = pd.DataFrame()
-    # for y_col_num in range(len(YCOLS)):
-    #     update_progress_bar(y_col_num, len(YCOLS))
-    #     y_col = YCOLS[y_col_num]
-
-    #     full_lin_reg = LinearRegression()
-    #     full_lin_reg.fit(frame_X, frame_y[y_col])
-    #     pred_y = full_lin_reg.predict(test_X)
-
-    #     pred_frame_test[y_col] = pred_y
-
-    
-    # print(pred_frame_test.shape)
-    # print(pred_frame_test.head(5))
-    # write_intersection_pred(
-    #     pred_frame_test,
-    #     os.path.join('Unmodified_Linear_Regression.csv')
-    # )    
+    pred_test_y = model.predict(test_X)
+    pred_test_y = pd.DataFrame(data = pred_test_y, columns = YCOLS)
+    write_intersection_pred(pred_test_y, 'Simple_Neural_Network.csv')
 
 if __name__ == '__main__':
     main()
